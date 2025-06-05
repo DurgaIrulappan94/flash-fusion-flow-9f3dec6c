@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
-import { FilePresentation, Brain, Rss } from 'lucide-react';
+import { Presentation, Brain, Rss } from 'lucide-react';
 import { PPTTemplateModal } from '@/components/PPTTemplateModal';
 
 const Index = () => {
@@ -43,7 +43,7 @@ const Index = () => {
             <CardContent className="p-8 text-center">
               <div className="mb-6 relative">
                 <div className="w-20 h-20 mx-auto bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <FilePresentation className="w-10 h-10 text-white" />
+                  <Presentation className="w-10 h-10 text-white" />
                 </div>
                 <div className="absolute inset-0 w-20 h-20 mx-auto bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl opacity-20 blur-xl group-hover:opacity-40 transition-opacity duration-300"></div>
               </div>
