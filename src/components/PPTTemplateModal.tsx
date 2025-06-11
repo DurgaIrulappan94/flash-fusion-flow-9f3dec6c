@@ -221,103 +221,119 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
       slides.forEach((slide, index) => {
         const slideObj = pptx.addSlide();
         
-        // Set professional background
-        slideObj.background = { color: 'F8F9FA' };
+        // Add your corporate template as background image
+        slideObj.addImage({
+          path: '/lovable-uploads/0e4a1609-fc1c-4b31-a93b-5415dbbd9666.png',
+          x: 0,
+          y: 0,
+          w: '100%',
+          h: '100%',
+          sizing: { type: 'cover', w: '100%', h: '100%' }
+        });
         
         if (slide.slideType === 'title') {
-          // Title slide
+          // Title slide - positioned to work with your template
           slideObj.addText(slide.title, {
-            x: 1,
-            y: 2,
-            w: 8,
+            x: 1.5,
+            y: 2.5,
+            w: 7,
             h: 1.5,
-            fontSize: 36,
+            fontSize: 32,
             bold: true,
             color: '2C3E50',
-            align: 'center'
+            align: 'center',
+            fontFace: 'Arial'
           });
           
           if (slide.subtitle) {
             slideObj.addText(slide.subtitle, {
-              x: 1,
-              y: 3.5,
-              w: 8,
+              x: 1.5,
+              y: 4,
+              w: 7,
               h: 0.8,
-              fontSize: 24,
+              fontSize: 20,
               color: '34495E',
-              align: 'center'
+              align: 'center',
+              fontFace: 'Arial'
             });
           }
           
-          // Add company branding
+          // Add powered by text in footer area
           slideObj.addText('Powered by CrewAI & Flash Fusion Flow', {
-            x: 1,
-            y: 6.5,
-            w: 8,
-            h: 0.5,
-            fontSize: 14,
+            x: 1.5,
+            y: 6.8,
+            w: 7,
+            h: 0.4,
+            fontSize: 12,
             color: '7F8C8D',
             align: 'center',
-            italic: true
+            italic: true,
+            fontFace: 'Arial'
           });
         } else if (slide.slideType === 'closing') {
           // Closing slide
           slideObj.addText(slide.title, {
-            x: 1,
-            y: 2.5,
-            w: 8,
+            x: 1.5,
+            y: 2.8,
+            w: 7,
             h: 1.5,
-            fontSize: 36,
+            fontSize: 32,
             bold: true,
             color: '2C3E50',
-            align: 'center'
+            align: 'center',
+            fontFace: 'Arial'
           });
           
           if (slide.subtitle) {
             slideObj.addText(slide.subtitle, {
-              x: 1,
-              y: 4,
-              w: 8,
+              x: 1.5,
+              y: 4.3,
+              w: 7,
               h: 0.8,
-              fontSize: 20,
+              fontSize: 18,
               color: '34495E',
-              align: 'center'
+              align: 'center',
+              fontFace: 'Arial'
             });
           }
         } else {
-          // Content slides
+          // Content slides - positioned within your template frame
           slideObj.addText(slide.title, {
-            x: 0.5,
-            y: 0.5,
-            w: 9,
-            h: 1,
-            fontSize: 28,
+            x: 1.2,
+            y: 1,
+            w: 7.6,
+            h: 0.8,
+            fontSize: 24,
             bold: true,
-            color: '2C3E50'
+            color: '2C3E50',
+            fontFace: 'Arial'
           });
           
-          // Add content with professional styling
+          // Add content bullets positioned within the template
           slide.content.forEach((point: string, pointIndex: number) => {
             slideObj.addText(`• ${point}`, {
-              x: 1,
-              y: 1.8 + (pointIndex * 0.9),
-              w: 8,
-              h: 0.8,
-              fontSize: 16,
+              x: 1.5,
+              y: 2.2 + (pointIndex * 0.7),
+              w: 7,
+              h: 0.6,
+              fontSize: 14,
               color: '34495E',
-              bullet: false
+              bullet: false,
+              fontFace: 'Arial',
+              lineSpacing: 20
             });
           });
           
-          // Add slide number
+          // Add slide number in bottom right
           slideObj.addText(`${index + 1}`, {
-            x: 9,
+            x: 8.5,
             y: 7,
             w: 0.5,
             h: 0.3,
-            fontSize: 12,
+            fontSize: 10,
             color: '95A5A6',
-            align: 'center'
+            align: 'center',
+            fontFace: 'Arial'
           });
         }
       });
