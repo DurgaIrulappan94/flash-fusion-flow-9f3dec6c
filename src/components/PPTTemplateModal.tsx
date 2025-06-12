@@ -5,10 +5,22 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { X, Sparkles, Download } from 'lucide-react';
 import { useState } from 'react';
+import { SlidePreview } from './SlidePreview';
+import { addImageToSlide } from '../utils/imageUpload';
 
 interface PPTTemplateModalProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface SlideData {
+  id: number;
+  title: string;
+  subtitle?: string;
+  content: string[];
+  slideType: 'title' | 'content' | 'closing';
+  layout: string;
+  images: string[];
 }
 
 const templates = [
@@ -70,8 +82,9 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
   const [additionalRequirements, setAdditionalRequirements] = useState('');
   const [templatePath, setTemplatePath] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedSlides, setGeneratedSlides] = useState<any[]>([]);
+  const [generatedSlides, setGeneratedSlides] = useState<SlideData[]>([]);
   const [showDownload, setShowDownload] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleTemplateSelect = (template: typeof templates[0]) => {
     if (template.isDefault) {
@@ -87,9 +100,10 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
     
     await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // Enhanced professional content generation
+    // Enhanced professional content generation with unique IDs
     const mockSlides = [
       {
+        id: 0,
         title: `${topic}`,
         subtitle: 'Professional Presentation',
         content: [
@@ -98,9 +112,12 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Key Performance Indicators',
           'Implementation Roadmap'
         ],
-        slideType: 'title'
+        slideType: 'title',
+        layout: 'title',
+        images: []
       },
       {
+        id: 1,
         title: 'Executive Summary',
         content: [
           `Comprehensive analysis of ${topic}`,
@@ -109,9 +126,12 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Risk assessment and mitigation strategies',
           'Expected ROI and business impact'
         ],
-        slideType: 'content'
+        slideType: 'content',
+        layout: 'content',
+        images: []
       },
       {
+        id: 2,
         title: 'Market Analysis & Opportunities',
         content: [
           'Current market landscape and trends',
@@ -120,9 +140,12 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Growth opportunities identification',
           'Market penetration strategies'
         ],
-        slideType: 'content'
+        slideType: 'content',
+        layout: 'content_with_image',
+        images: []
       },
       {
+        id: 3,
         title: 'Strategic Framework',
         content: [
           'Vision and mission alignment',
@@ -131,9 +154,12 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Success metrics and KPIs',
           'Timeline and milestones'
         ],
-        slideType: 'content'
+        slideType: 'content',
+        layout: 'content',
+        images: []
       },
       {
+        id: 4,
         title: 'Implementation Plan',
         content: [
           'Phase 1: Foundation and Setup (Months 1-3)',
@@ -142,9 +168,12 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Phase 4: Scaling and Growth (Months 10-12)',
           'Resource allocation and budget requirements'
         ],
-        slideType: 'content'
+        slideType: 'content',
+        layout: 'content',
+        images: []
       },
       {
+        id: 6,
         title: 'Risk Management',
         content: [
           'Identified potential risks and challenges',
@@ -153,9 +182,12 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Monitoring and review processes',
           'Escalation procedures and decision frameworks'
         ],
-        slideType: 'content'
+        slideType: 'content',
+        layout: 'content',
+        images: []
       },
       {
+        id: 7,
         title: 'Financial Projections',
         content: [
           'Investment requirements and funding sources',
@@ -164,9 +196,12 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Break-even analysis and profitability timeline',
           'Return on investment calculations'
         ],
-        slideType: 'content'
+        slideType: 'content',
+        layout: 'content_with_image',
+        images: []
       },
       {
+        id: 8,
         title: 'Next Steps & Recommendations',
         content: [
           'Immediate action items and priorities',
@@ -175,9 +210,12 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Success measurement and monitoring framework',
           'Follow-up meetings and review schedule'
         ],
-        slideType: 'content'
+        slideType: 'content',
+        layout: 'content',
+        images: []
       },
       {
+        id: 9,
         title: 'Thank You',
         subtitle: 'Questions & Discussion',
         content: [
@@ -186,13 +224,16 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Appendix Available',
           'Follow-up Actions'
         ],
-        slideType: 'closing'
+        slideType: 'closing',
+        layout: 'title',
+        images: []
       }
     ];
 
     // Add requirements-specific content if provided
     if (requirements.trim()) {
       mockSlides.splice(2, 0, {
+        id: mockSlides.length,
         title: 'Custom Requirements Analysis',
         content: [
           `Specific focus on: ${requirements}`,
@@ -201,7 +242,9 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Quality assurance measures',
           'Compliance and regulatory considerations'
         ],
-        slideType: 'content'
+        slideType: 'content',
+        layout: 'content_with_image',
+        images: []
       });
     }
     
@@ -229,6 +272,17 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           w: '100%',
           h: '100%',
           sizing: { type: 'cover', w: '100%', h: '100%' }
+        });
+        
+        // Add user uploaded images if any
+        slide.images.forEach((imageDataUrl: string, imgIndex: number) => {
+          slideObj.addImage({
+            data: imageDataUrl,
+            x: 6 + (imgIndex * 1.5),
+            y: 1.5,
+            w: 1.4,
+            h: 1.4
+          });
         });
         
         if (slide.slideType === 'title') {
@@ -360,7 +414,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
       );
       
       setGeneratedSlides(slides);
-      setShowDownload(true);
+      setShowPreview(true);
       
       console.log('Professional slides generated successfully:', slides);
     } catch (error) {
@@ -369,6 +423,20 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleImageUpload = async (slideId: number, imageFile: File) => {
+    try {
+      const updatedSlides = await addImageToSlide(slideId, imageFile, generatedSlides);
+      setGeneratedSlides(updatedSlides);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Error uploading image. Please try again.');
+    }
+  };
+
+  const handleSlidesChange = (updatedSlides: any[]) => {
+    setGeneratedSlides(updatedSlides);
   };
 
   const handleDownloadPPT = async () => {
@@ -391,6 +459,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
     setTemplatePath('');
     setGeneratedSlides([]);
     setShowDownload(false);
+    setShowPreview(false);
   };
 
   return (
@@ -422,97 +491,99 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
         
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {selectedTemplate ? (
-            <div className="max-w-2xl mx-auto space-y-6">
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4">
-                  <Sparkles className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">Professional AI-Powered Presentation Generator</h3>
-                <p className="text-gray-600">Create comprehensive, professional presentations using CrewAI with your corporate template</p>
-              </div>
+            <div className="max-w-4xl mx-auto space-y-6">
+              {!showPreview ? (
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4">
+                      <Sparkles className="w-10 h-10 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Professional AI-Powered Presentation Generator</h3>
+                    <p className="text-gray-600">Create comprehensive, professional presentations using CrewAI with your corporate template</p>
+                  </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="topic" className="block text-sm font-medium text-gray-700 mb-2">
-                    Presentation Topic *
-                  </label>
-                  <Input
-                    id="topic"
-                    placeholder="e.g., Digital Transformation Strategy, Market Expansion Plan, Product Launch Strategy"
-                    value={presentationTopic}
-                    onChange={(e) => setPresentationTopic(e.target.value)}
-                    className="w-full"
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="topic" className="block text-sm font-medium text-gray-700 mb-2">
+                        Presentation Topic *
+                      </label>
+                      <Input
+                        id="topic"
+                        placeholder="e.g., Digital Transformation Strategy, Market Expansion Plan, Product Launch Strategy"
+                        value={presentationTopic}
+                        onChange={(e) => setPresentationTopic(e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="template-path" className="block text-sm font-medium text-gray-700 mb-2">
+                        Custom Template Path (Optional)
+                      </label>
+                      <Input
+                        id="template-path"
+                        placeholder="e.g., /path/to/your/custom-template.pptx (Leave empty to use default corporate template)"
+                        value={templatePath}
+                        onChange={(e) => setTemplatePath(e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="requirements" className="block text-sm font-medium text-gray-700 mb-2">
+                        Additional Requirements (Optional)
+                      </label>
+                      <Textarea
+                        id="requirements"
+                        placeholder="e.g., Include financial projections, focus on competitive analysis, add risk assessment, target executive audience, include implementation timeline..."
+                        value={additionalRequirements}
+                        onChange={(e) => setAdditionalRequirements(e.target.value)}
+                        className="w-full h-24 resize-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={handleBackToTemplates}
+                      className="flex-1"
+                      disabled={isGenerating}
+                    >
+                      Back to Templates
+                    </Button>
+                    <Button
+                      onClick={handleGenerateWithAI}
+                      className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white"
+                      disabled={isGenerating || !presentationTopic.trim()}
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      {isGenerating ? 'Generating Professional Content with CrewAI...' : 'Generate Professional Presentation'}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <SlidePreview
+                    slides={generatedSlides}
+                    onSlidesChange={handleSlidesChange}
+                    onImageUpload={handleImageUpload}
                   />
-                </div>
-
-                <div>
-                  <label htmlFor="template-path" className="block text-sm font-medium text-gray-700 mb-2">
-                    Custom Template Path (Optional)
-                  </label>
-                  <Input
-                    id="template-path"
-                    placeholder="e.g., /path/to/your/custom-template.pptx (Leave empty to use default corporate template)"
-                    value={templatePath}
-                    onChange={(e) => setTemplatePath(e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="requirements" className="block text-sm font-medium text-gray-700 mb-2">
-                    Additional Requirements (Optional)
-                  </label>
-                  <Textarea
-                    id="requirements"
-                    placeholder="e.g., Include financial projections, focus on competitive analysis, add risk assessment, target executive audience, include implementation timeline..."
-                    value={additionalRequirements}
-                    onChange={(e) => setAdditionalRequirements(e.target.value)}
-                    className="w-full h-24 resize-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={handleBackToTemplates}
-                  className="flex-1"
-                  disabled={isGenerating}
-                >
-                  Back to Templates
-                </Button>
-                {!showDownload ? (
-                  <Button
-                    onClick={handleGenerateWithAI}
-                    className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white"
-                    disabled={isGenerating || !presentationTopic.trim()}
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    {isGenerating ? 'Generating Professional Content with CrewAI...' : 'Generate Professional Presentation'}
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={handleDownloadPPT}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Professional PPT
-                  </Button>
-                )}
-              </div>
-
-              {showDownload && generatedSlides.length > 0 && (
-                <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
-                  <h4 className="font-semibold text-green-800 mb-2">Professional Presentation Generated Successfully!</h4>
-                  <p className="text-green-700 text-sm mb-3">
-                    Your comprehensive presentation "{presentationTopic}" has been generated with {generatedSlides.length} professional slides using CrewAI.
-                  </p>
-                  <div className="space-y-2">
-                    {generatedSlides.map((slide, index) => (
-                      <div key={index} className="text-sm text-green-600">
-                        Slide {index + 1}: {slide.title}
-                      </div>
-                    ))}
+                  
+                  <div className="flex gap-3 pt-4 border-t">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowPreview(false)}
+                      className="flex-1"
+                    >
+                      Back to Edit
+                    </Button>
+                    <Button
+                      onClick={handleDownloadPPT}
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Professional PPT
+                    </Button>
                   </div>
                 </div>
               )}
