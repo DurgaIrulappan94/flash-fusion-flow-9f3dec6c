@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -144,20 +145,20 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           slideObj.addImage({
             data: imageDataUrl,
             x: 6 + (imgIndex * 1.5),
-            y: 1.5,
+            y: 1,
             w: 1.4,
             h: 1.4
           });
         });
         
         if (slide.slideType === 'title') {
-          // Title slide - positioned to work with your template
+          // Title slide - centered positioning with balanced spacing
           slideObj.addText(slide.title, {
-            x: 1.5,
+            x: 1,
             y: 2.5,
-            w: 7,
-            h: 1.5,
-            fontSize: 32,
+            w: 8,
+            h: 1.2,
+            fontSize: 28,
             bold: true,
             color: '2C3E50',
             align: 'center',
@@ -166,11 +167,11 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           
           if (slide.subtitle) {
             slideObj.addText(slide.subtitle, {
-              x: 1.5,
-              y: 4,
-              w: 7,
+              x: 1,
+              y: 3.8,
+              w: 8,
               h: 0.8,
-              fontSize: 20,
+              fontSize: 18,
               color: '34495E',
               align: 'center',
               fontFace: 'Arial'
@@ -179,9 +180,9 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           
           // Add powered by text in footer area
           slideObj.addText('Powered by CrewAI & Flash Fusion Flow', {
-            x: 1.5,
-            y: 6.8,
-            w: 7,
+            x: 1,
+            y: 6.5,
+            w: 8,
             h: 0.4,
             fontSize: 12,
             color: '7F8C8D',
@@ -190,13 +191,13 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
             fontFace: 'Arial'
           });
         } else if (slide.slideType === 'closing') {
-          // Closing slide
+          // Closing slide - centered with balanced spacing
           slideObj.addText(slide.title, {
-            x: 1.5,
+            x: 1,
             y: 2.8,
-            w: 7,
-            h: 1.5,
-            fontSize: 32,
+            w: 8,
+            h: 1.2,
+            fontSize: 26,
             bold: true,
             color: '2C3E50',
             align: 'center',
@@ -205,49 +206,53 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           
           if (slide.subtitle) {
             slideObj.addText(slide.subtitle, {
-              x: 1.5,
-              y: 4.3,
-              w: 7,
+              x: 1,
+              y: 4.2,
+              w: 8,
               h: 0.8,
-              fontSize: 18,
+              fontSize: 16,
               color: '34495E',
               align: 'center',
               fontFace: 'Arial'
             });
           }
         } else {
-          // Content slides - positioned within your template frame
+          // Content slides - improved positioning with proper spacing
           slideObj.addText(slide.title, {
-            x: 1.2,
-            y: 1,
-            w: 7.6,
-            h: 0.8,
-            fontSize: 24,
+            x: 0.8,
+            y: 0.8,
+            w: 8.4,
+            h: 0.7,
+            fontSize: 22,
             bold: true,
             color: '2C3E50',
             fontFace: 'Arial'
           });
           
-          // Add content bullets positioned within the template
-          slide.content.forEach((point: string, pointIndex: number) => {
+          // Add content bullets with improved spacing and positioning
+          const startY = 1.8;
+          const lineHeight = 0.45;
+          const maxContentLines = Math.min(slide.content.length, 10); // Limit to prevent overflow
+          
+          slide.content.slice(0, maxContentLines).forEach((point: string, pointIndex: number) => {
             slideObj.addText(`• ${point}`, {
-              x: 1.5,
-              y: 2.2 + (pointIndex * 0.7),
-              w: 7,
-              h: 0.6,
-              fontSize: 14,
+              x: 1,
+              y: startY + (pointIndex * lineHeight),
+              w: 7.5,
+              h: 0.4,
+              fontSize: 13,
               color: '34495E',
               bullet: false,
               fontFace: 'Arial',
-              lineSpacing: 20
+              lineSpacing: 18
             });
           });
           
           // Add slide number in bottom right
           slideObj.addText(`${index + 1}`, {
-            x: 8.5,
-            y: 7,
-            w: 0.5,
+            x: 8.8,
+            y: 6.8,
+            w: 0.4,
             h: 0.3,
             fontSize: 10,
             color: '95A5A6',
