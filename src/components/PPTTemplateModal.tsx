@@ -100,8 +100,8 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
     
     await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // Enhanced professional content generation with unique IDs
-    const mockSlides = [
+    // Enhanced professional content generation with proper typing
+    const mockSlides: SlideData[] = [
       {
         id: 0,
         title: `${topic}`,
@@ -112,7 +112,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Key Performance Indicators',
           'Implementation Roadmap'
         ],
-        slideType: 'title',
+        slideType: 'title' as const,
         layout: 'title',
         images: []
       },
@@ -126,7 +126,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Risk assessment and mitigation strategies',
           'Expected ROI and business impact'
         ],
-        slideType: 'content',
+        slideType: 'content' as const,
         layout: 'content',
         images: []
       },
@@ -140,7 +140,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Growth opportunities identification',
           'Market penetration strategies'
         ],
-        slideType: 'content',
+        slideType: 'content' as const,
         layout: 'content_with_image',
         images: []
       },
@@ -154,7 +154,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Success metrics and KPIs',
           'Timeline and milestones'
         ],
-        slideType: 'content',
+        slideType: 'content' as const,
         layout: 'content',
         images: []
       },
@@ -168,7 +168,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Phase 4: Scaling and Growth (Months 10-12)',
           'Resource allocation and budget requirements'
         ],
-        slideType: 'content',
+        slideType: 'content' as const,
         layout: 'content',
         images: []
       },
@@ -182,7 +182,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Monitoring and review processes',
           'Escalation procedures and decision frameworks'
         ],
-        slideType: 'content',
+        slideType: 'content' as const,
         layout: 'content',
         images: []
       },
@@ -196,7 +196,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Break-even analysis and profitability timeline',
           'Return on investment calculations'
         ],
-        slideType: 'content',
+        slideType: 'content' as const,
         layout: 'content_with_image',
         images: []
       },
@@ -210,7 +210,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Success measurement and monitoring framework',
           'Follow-up meetings and review schedule'
         ],
-        slideType: 'content',
+        slideType: 'content' as const,
         layout: 'content',
         images: []
       },
@@ -224,7 +224,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Appendix Available',
           'Follow-up Actions'
         ],
-        slideType: 'closing',
+        slideType: 'closing' as const,
         layout: 'title',
         images: []
       }
@@ -242,7 +242,7 @@ export const PPTTemplateModal = ({ isOpen, onClose }: PPTTemplateModalProps) => 
           'Quality assurance measures',
           'Compliance and regulatory considerations'
         ],
-        slideType: 'content',
+        slideType: 'content' as const,
         layout: 'content_with_image',
         images: []
       });
